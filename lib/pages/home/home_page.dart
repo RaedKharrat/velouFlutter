@@ -9,7 +9,7 @@ import 'package:flutter_dashboard/pages/home/widgets/line_chart_card.dart';
 class HomePage extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
 
-  HomePage({Key? key, required this.scaffoldKey}) : super(key: key);
+  const HomePage({Key? key, required this.scaffoldKey}) : super(key: key);
 
   SizedBox _height(BuildContext context) => SizedBox(
         height: Responsive.isDesktop(context) ? 30 : 20,

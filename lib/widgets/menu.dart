@@ -1,3 +1,4 @@
+// Menu.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard/Responsive.dart';
 import 'package:flutter_dashboard/model/menu_modal.dart';
@@ -26,20 +27,11 @@ class _MenuState extends State<Menu> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      decoration: BoxDecoration(
-        border: Border(
-          right: BorderSide(
-            color: Colors.grey[800]!,
-            width: 1,
-          ),
-        ),
+    return Drawer(
+      child: Container(
         color: const Color(0xFF171821),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
           child: Column(
             children: [
               SizedBox(
@@ -62,7 +54,7 @@ class _MenuState extends State<Menu> {
                       setState(() {
                         selected = i;
                       });
-                      widget.scaffoldKey.currentState!.closeDrawer();
+                      widget.scaffoldKey.currentState!.openEndDrawer();
                       navigateToPage(menu[i].title);
                     },
                     child: Row(
