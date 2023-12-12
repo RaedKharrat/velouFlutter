@@ -3,6 +3,8 @@ import 'package:flutter_dashboard/const.dart';
 import 'package:flutter_dashboard/dashboard.dart';
 import 'package:flutter_dashboard/widgets/menu.dart';
 import 'package:flutter_dashboard/pages/home/reservation_page.dart';
+import 'package:flutter_dashboard/pages/home/show_reservation.dart';
+
 import 'package:flutter_dashboard/pages/home/home_page.dart';
 
 void main() {
@@ -42,7 +44,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/dashboard': (context) => HomePage(scaffoldKey: GlobalKey<ScaffoldState>()), // Provide scaffoldKey here
         '/reservation': (context) => ReservationPage(scaffoldKey: GlobalKey<ScaffoldState>()), // Provide scaffoldKey here
-        // Add other routes as needed
+        '/show_chart': (context) => ShowReservationPage(scaffoldKey: GlobalKey<ScaffoldState>()),
         // ...
       },
       home: HomePage(scaffoldKey: GlobalKey<ScaffoldState>()), // Provide scaffoldKey here

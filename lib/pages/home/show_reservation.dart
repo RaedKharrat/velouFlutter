@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard/Responsive.dart';
-import 'package:flutter_dashboard/widgets/menu.dart';
 import 'package:flutter_dashboard/pages/home/widgets/header_widget.dart';
 import 'package:flutter_dashboard/pages/home/widgets/activity_details_card.dart';
 import 'package:flutter_dashboard/pages/home/widgets/bar_graph_card.dart';
 import 'package:flutter_dashboard/pages/home/widgets/line_chart_card.dart';
+import 'package:flutter_dashboard/pages/home/widgets/tableau_reservation.dart';
+import 'package:flutter_dashboard/pages/home/widgets/show_reservation_card.dart';
+import 'package:flutter_dashboard/widgets/menu.dart';
 
-class HomePage extends StatelessWidget {
+class ShowReservationPage extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
 
-  const HomePage({Key? key, required this.scaffoldKey}) : super(key: key);
+  const ShowReservationPage({Key? key, required this.scaffoldKey}) : super(key: key);
 
   SizedBox _height(BuildContext context) => SizedBox(
         height: Responsive.isDesktop(context) ? 30 : 20,
@@ -20,9 +22,9 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
-        title: const Text('Flutter Responsive Dashboard'),
+        title: const Text('Show Reservation Page'),
       ),
-      drawer: Menu(scaffoldKey: scaffoldKey),
+      endDrawer: Menu(scaffoldKey: scaffoldKey),
       body: Material(
         child: Row(
           children: [
@@ -42,14 +44,14 @@ class HomePage extends StatelessWidget {
                         SizedBox(
                           height: Responsive.isMobile(context) ? 5 : 18,
                         ),
+                        // Include the Header widget
                         Header(scaffoldKey: scaffoldKey),
+                        _height(context),
+                        ShowReservationCard(),
                         _height(context),
                         const ActivityDetailsCard(),
                         _height(context),
-                        LineChartCard(),
-                        _height(context),
-                        BarGraphCard(),
-                        _height(context),
+                        
                       ],
                     ),
                   ),
