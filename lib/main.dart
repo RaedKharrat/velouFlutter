@@ -4,8 +4,8 @@ import 'package:flutter_dashboard/dashboard.dart';
 import 'package:flutter_dashboard/widgets/menu.dart';
 import 'package:flutter_dashboard/pages/home/reservation_page.dart';
 import 'package:flutter_dashboard/pages/home/show_reservation.dart';
-
 import 'package:flutter_dashboard/pages/home/home_page.dart';
+import 'package:flutter_dashboard/service/api_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,6 +16,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var apiService = ApiService();
+
     return MaterialApp(
       title: 'Velou Dashboard',
       debugShowCheckedModeBanner: false,
@@ -36,18 +38,17 @@ class MyApp extends StatelessWidget {
             900: const Color(primaryColorCode).withOpacity(1.0),
           },
         ),
-        scaffoldBackgroundColor: Color(0xFF171821),
+        scaffoldBackgroundColor: const Color(0xFF171821),
         fontFamily: 'IBMPlexSans',
         brightness: Brightness.dark,
       ),
       initialRoute: '/dashboard',
       routes: {
-        '/dashboard': (context) => HomePage(scaffoldKey: GlobalKey<ScaffoldState>()), // Provide scaffoldKey here
-        '/reservation': (context) => ReservationPage(scaffoldKey: GlobalKey<ScaffoldState>()), // Provide scaffoldKey here
+        '/dashboard': (context) => HomePage(scaffoldKey: GlobalKey<ScaffoldState>()),
+        '/reservation': (context) => ReservationPage(scaffoldKey: GlobalKey<ScaffoldState>()),
         '/show_chart': (context) => ShowReservationPage(scaffoldKey: GlobalKey<ScaffoldState>()),
-        // ...
       },
-      home: HomePage(scaffoldKey: GlobalKey<ScaffoldState>()), // Provide scaffoldKey here
+      home: HomePage(scaffoldKey: GlobalKey<ScaffoldState>()),
     );
   }
 }

@@ -56,7 +56,6 @@ class ReservationPage extends StatelessWidget {
                         LineChartCard(),
                         _height(context),
                         // Include the Header2 widget and provide the scaffoldKey
-                     
                         // ... Other widgets ...
                       ],
                     ),
