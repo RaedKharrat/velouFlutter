@@ -45,13 +45,12 @@ class ShowReservationPage extends StatelessWidget {
                           height: Responsive.isMobile(context) ? 5 : 18,
                         ),
                         // Include the Header widget
-                        Header(scaffoldKey: scaffoldKey),
-                        _height(context),
+                       
                         ShowReservationCard(),
                         _height(context),
+                       
                         const ActivityDetailsCard(),
                         _height(context),
-                        
                       ],
                     ),
                   ),

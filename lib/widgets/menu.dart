@@ -1,3 +1,4 @@
+// menu.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard/Responsive.dart';
 import 'package:flutter_dashboard/model/menu_modal.dart';
@@ -14,12 +15,12 @@ class Menu extends StatefulWidget {
 
 class _MenuState extends State<Menu> {
   List<MenuModel> menu = [
-    MenuModel(icon: 'assets/svg/home.svg', title: "Dashboard"),
-    MenuModel(icon: 'assets/svg/profile.svg', title: "Users"),
-    MenuModel(icon: 'assets/svg/exercise.svg', title: "Chats"),
-    MenuModel(icon: 'assets/svg/setting.svg', title: "Velos"),
-    MenuModel(icon: 'assets/svg/history.svg', title: "Reservations"),
-    MenuModel(icon: 'assets/svg/signout.svg', title: "Signout"),
+    MenuModel(icon: 'home', title: "Dashboard"),
+    MenuModel(icon: 'person', title: "Users"),
+    MenuModel(icon: 'chat', title: "Chats"),
+    MenuModel(icon: 'settings', title: "Velos"),
+    MenuModel(icon: 'payment', title: "Reservations"),
+    MenuModel(icon: 'logout', title: "Signout"),
   ];
 
   @override
@@ -57,7 +58,7 @@ class _MenuState extends State<Menu> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 13, vertical: 7),
                           child: SvgPicture.asset(
-                            menu[i].icon,
+                            'assets/svg/${menu[i].icon}.svg',
                             color: menu[i].isSelected
                                 ? Colors.black
                                 : Colors.grey,
@@ -84,7 +85,7 @@ class _MenuState extends State<Menu> {
                 margin: const EdgeInsets.symmetric(vertical: 20),
                 child: Image.asset(
                   'assets/images/logovelouu.png', // Replace with your image path
-                  width: 230,  // Adjust the width to make it bigger
+                  width: 230, // Adjust the width to make it bigger
                   height: 230, // Adjust the height to make it bigger
                 ),
               ),

@@ -152,6 +152,24 @@ class _ShowReservationCardState extends State<ShowReservationCard> {
                 hintText: 'Enter Reservation Promo Code',
               ),
             ),
+            Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 30),
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Handle submit button press
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                    primary: Colors.green,
+                  ),
+                  child: Text(
+                    'Save Changes',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

@@ -13,6 +13,15 @@ class TableauReservation extends StatefulWidget {
 
 class _TableauReservationState extends State<TableauReservation> {
   List<TableauReservationClass> reservations = [];
+  int rowsToShow = 10;
+  bool hideIdReservation = false;
+  bool hideDateReservation = false;
+  bool hidePromoCode = false;
+  bool hideTypePayment = false;
+  bool hideEtat = false;
+  bool hideIdUser = false;
+  bool hideIdVelo = false;
+  bool hideStripeCheckoutSessionId = false;
 
   @override
   void initState() {
@@ -38,7 +47,6 @@ class _TableauReservationState extends State<TableauReservation> {
     return SingleChildScrollView(
       child: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: 15),
             Padding(
@@ -49,10 +57,23 @@ class _TableauReservationState extends State<TableauReservation> {
                   Text(
                     'Reservation Management',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 30,
                       fontWeight: FontWeight.bold,
-                      
+                      color: Colors.blue, // Set the text color to blue
                     ),
+                    textAlign: TextAlign.center, // Center align the text
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.visibility),
+                    onPressed: () {
+                      setState(() {
+                        hideIdReservation = !hideIdReservation;
+                        hideIdUser = !hideIdUser;
+                        hideIdVelo = !hideIdVelo;
+                        hideStripeCheckoutSessionId =
+                            !hideStripeCheckoutSessionId;
+                      });
+                    },
                   ),
                 ],
               ),
@@ -65,21 +86,41 @@ class _TableauReservationState extends State<TableauReservation> {
                 horizontalMargin: 20,
                 dataRowHeight: 40,
                 columns: [
-                  DataColumn(label: _buildTableHeader('idReservation')),
-                  DataColumn(label: _buildTableHeader('dateReservation')),
-                  DataColumn(label: _buildTableHeader('promoCode')),
-                  DataColumn(label: _buildTableHeader('typePayment')),
-                  DataColumn(label: _buildTableHeader('etat')),
-                  DataColumn(label: _buildTableHeader('idUser')),
-                  DataColumn(label: _buildTableHeader('idVelo')),
-                  DataColumn(label: _buildTableHeader('stripeCheckoutSessionId')),
+                  if (!hideIdReservation)
+                    DataColumn(label: _buildTableHeader('idReservation')),
+                  if (!hideDateReservation)
+                    DataColumn(label: _buildTableHeader('dateReservation')),
+                  if (!hidePromoCode)
+                    DataColumn(label: _buildTableHeader('promoCode')),
+                  if (!hideTypePayment)
+                    DataColumn(label: _buildTableHeader('typePayment')),
+                  if (!hideEtat)
+                    DataColumn(label: _buildTableHeader('etat')),
+                  if (!hideIdUser)
+                    DataColumn(label: _buildTableHeader('idUser')),
+                  if (!hideIdVelo)
+                    DataColumn(label: _buildTableHeader('idVelo')),
+                  if (!hideStripeCheckoutSessionId)
+                    DataColumn(
+                        label: _buildTableHeader('stripeCheckoutSessionId')),
                   DataColumn(label: _buildTableHeader('Actions')),
                 ],
-                rows: reservations.map((reservation) {
-                  return _buildDataRow(reservation);
-                }).toList(),
+                rows: reservations
+                    .take(rowsToShow)
+                    .map((reservation) => _buildDataRow(reservation))
+                    .toList(),
               ),
             ),
+            SizedBox(height: 10),
+            if (reservations.length > rowsToShow)
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    rowsToShow += 10;
+                  });
+                },
+                child: Text('Show More'),
+              ),
           ],
         ),
       ),
@@ -88,21 +129,28 @@ class _TableauReservationState extends State<TableauReservation> {
 
   DataRow _buildDataRow(TableauReservationClass reservation) {
     return DataRow(cells: [
-      DataCell(_buildTableCell(reservation.idReservation)),
-      DataCell(_buildTableCell(reservation.dateReservation)),
-      DataCell(_buildTableCell(reservation.promoCode)),
-      DataCell(_buildTableCell(reservation.typePayment)),
-      DataCell(_buildTableCell(reservation.etat.toString())),
-      DataCell(_buildTableCell(reservation.idUser)),
-      DataCell(_buildTableCell(reservation.idVelo)),
-      DataCell(_buildTableCell(reservation.stripeCheckoutSessionId)),
+      if (!hideIdReservation)
+        DataCell(_buildTableCell(reservation.idReservation)),
+      if (!hideDateReservation)
+        DataCell(_buildTableCell(reservation.dateReservation)),
+      if (!hidePromoCode)
+        DataCell(_buildTableCell(reservation.promoCode)),
+      if (!hideTypePayment)
+        DataCell(_buildTableCell(reservation.typePayment)),
+      if (!hideEtat) DataCell(_buildTableCell(reservation.etat.toString())),
+      if (!hideIdUser) DataCell(_buildTableCell(reservation.idUser)),
+      if (!hideIdVelo) DataCell(_buildTableCell(reservation.idVelo)),
+      if (!hideStripeCheckoutSessionId)
+        DataCell(_buildTableCell(reservation.stripeCheckoutSessionId)),
       DataCell(Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           IconButton(
             icon: Icon(Icons.delete, color: Colors.red),
             onPressed: () {
-              // Handle delete action
+              setState((){
+                reservations.remove(reservation);
+              });
             },
           ),
           IconButton(
@@ -131,7 +179,6 @@ class _TableauReservationState extends State<TableauReservation> {
   Widget _buildTableCell(String text) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-     
       child: Center(
         child: Text(
           text,
