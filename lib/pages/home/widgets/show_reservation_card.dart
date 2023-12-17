@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dashboard/model/tableau_ReservationClass.dart';
 
 class ShowReservationCard extends StatefulWidget {
+  final TableauReservationClass reservation;
+
+  ShowReservationCard({required this.reservation});
+
   @override
   _ShowReservationCardState createState() => _ShowReservationCardState();
 }
@@ -59,6 +64,7 @@ class _ShowReservationCardState extends State<ShowReservationCard> {
                 border: OutlineInputBorder(),
                 hintText: 'Reservation ID',
               ),
+              initialValue: widget.reservation.idReservation,
             ),
             SizedBox(height: 10),
             Text(

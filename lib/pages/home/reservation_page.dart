@@ -47,10 +47,8 @@ class ReservationPage extends StatelessWidget {
                         // Include the Header widget
                         ActivityDetailsCard(),
                         _height(context),
-                        Header(scaffoldKey: scaffoldKey),
-                        _height(context),
-                        Header2(scaffoldKey: scaffoldKey),
-                        _height(context),
+                       
+               
                         TableauReservation(),
                         _height(context),
                         LineChartCard(),

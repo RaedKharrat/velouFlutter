@@ -32,4 +32,10 @@ class TableauReservationClass {
       stripeCheckoutSessionId: json['stripeCheckoutSessionId'].toString(),
     );
   }
+
+  // Add this getter
+  String get shortDateReservation {
+    // Assuming dateReservation is a String in the format 'yyyy-MM-ddTHH:mm:ss'
+    return dateReservation.substring(0, 10);
+  }
 }

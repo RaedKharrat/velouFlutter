@@ -1,7 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_dashboard/const.dart';
 import 'package:flutter_dashboard/model/tableau_ReservationClass.dart';
+import 'package:flutter_dashboard/pages/home/widgets/show_reservation_card.dart';
+import 'package:flutter_dashboard/responsive.dart';
 import 'package:flutter_dashboard/service/api_service.dart';
 
 class TableauReservation extends StatefulWidget {
@@ -13,6 +14,7 @@ class TableauReservation extends StatefulWidget {
 
 class _TableauReservationState extends State<TableauReservation> {
   List<TableauReservationClass> reservations = [];
+  List<TableauReservationClass> filteredReservations = [];
   int rowsToShow = 10;
   bool hideIdReservation = false;
   bool hideDateReservation = false;
@@ -22,11 +24,16 @@ class _TableauReservationState extends State<TableauReservation> {
   bool hideIdUser = false;
   bool hideIdVelo = false;
   bool hideStripeCheckoutSessionId = false;
+  TextEditingController passwordController = TextEditingController();
+  bool isHidden = false;
+  bool sortAscending = true;
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     fetchReservations();
+    _sortReservations();
   }
 
   Future<void> fetchReservations() async {
@@ -35,11 +42,116 @@ class _TableauReservationState extends State<TableauReservation> {
       final fetchedReservations = await apiService.fetchReservations();
       setState(() {
         reservations = fetchedReservations;
+        filteredReservations = List.from(reservations);
       });
     } catch (error) {
       print('Error fetching reservations: $error');
-      // Handle error, for example, show an error message to the user
     }
+  }
+
+  void _navigateToShowChart(BuildContext context, TableauReservationClass reservation) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ShowReservationCard(reservation: reservation),
+      ),
+    );
+  }
+
+  DataRow _buildDataRow(TableauReservationClass reservation) {
+    return DataRow(cells: [
+      if (!hideIdReservation) DataCell(_buildTableCell(reservation.idReservation)),
+      if (!hideDateReservation) DataCell(_buildTableCell(reservation.shortDateReservation)),
+      if (!hidePromoCode) DataCell(_buildTableCell(reservation.promoCode)),
+      if (!hideTypePayment) DataCell(_buildTableCell(reservation.typePayment)),
+      if (!hideEtat) DataCell(_buildTableCell(reservation.etat.toString())),
+      if (!hideIdUser) DataCell(_buildTableCell(reservation.idUser)),
+      if (!hideIdVelo) DataCell(_buildTableCell(reservation.idVelo)),
+      if (!hideStripeCheckoutSessionId) DataCell(_buildTableCell(reservation.stripeCheckoutSessionId)),
+      DataCell(Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: Icon(Icons.delete, color: Colors.red),
+            onPressed: () {
+              _showDeleteConfirmationDialog(reservation.idReservation);
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.send, color: Colors.blue),
+            onPressed: () {
+              _sendPromoCode(reservation.promoCode, reservation.idUser);
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.show_chart, color: Colors.yellow),
+            onPressed: () {
+              _navigateToShowChart(context, reservation);
+            },
+          ),
+        ],
+      )),
+    ]);
+  }
+
+  Future<void> _showDeleteConfirmationDialog(String reservationId) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Deletion'),
+          content: Text('Are you sure you want to delete this reservation?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                _deleteReservation(reservationId);
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteReservation(String reservationId) async {
+    try {
+      final apiService = ApiService();
+      await apiService.deleteReservation(reservationId);
+      print('Reservation deleted successfully.');
+    } catch (error) {
+      print('Error deleting reservation: $error');
+    }
+  }
+
+  void _filterReservations() {
+    final String query = searchController.text.toLowerCase();
+    setState(() {
+      if (query.isEmpty) {
+        filteredReservations = List.from(reservations);
+      } else {
+        filteredReservations = reservations
+            .where((reservation) =>
+                reservation.idReservation.toLowerCase().contains(query) ||
+                reservation.shortDateReservation.toLowerCase().contains(query) ||
+                reservation.promoCode.toLowerCase().contains(query) ||
+                reservation.typePayment.toLowerCase().contains(query) ||
+                reservation.etat.toString().toLowerCase().contains(query) ||
+                reservation.idUser.toLowerCase().contains(query) ||
+                reservation.idVelo.toLowerCase().contains(query) ||
+                reservation.stripeCheckoutSessionId
+                    .toLowerCase()
+                    .contains(query))
+            .toList();
+      }
+    });
   }
 
   @override
@@ -51,29 +163,123 @@ class _TableauReservationState extends State<TableauReservation> {
             SizedBox(height: 15),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
                 children: [
+                  // Title
                   Text(
                     'Reservation Management',
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blue, // Set the text color to blue
+                      color: Colors.blue,
                     ),
-                    textAlign: TextAlign.center, // Center align the text
+                    textAlign: TextAlign.center,
                   ),
-                  IconButton(
-                    icon: Icon(Icons.visibility),
-                    onPressed: () {
-                      setState(() {
-                        hideIdReservation = !hideIdReservation;
-                        hideIdUser = !hideIdUser;
-                        hideIdVelo = !hideIdVelo;
-                        hideStripeCheckoutSessionId =
-                            !hideStripeCheckoutSessionId;
-                      });
+                  SizedBox(height: 10),
+                  // Password visibility and sort options
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Password visibility
+                      IconButton(
+                        icon: Icon(Icons.visibility),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text('Enter Password'),
+                                content: TextField(
+                                  controller: passwordController,
+                                  obscureText: true,
+                                ),
+                                actions: [
+                                  TextButton(
+                                    child: Text('Cancel'),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text('Submit'),
+                                    onPressed: () {
+                                      if (passwordController.text == '6666') {
+                                        setState(() {
+                                          isHidden = !isHidden;
+                                          hideIdReservation = isHidden;
+                                          hideIdUser = isHidden;
+                                          hideIdVelo = isHidden;
+                                          hideStripeCheckoutSessionId = isHidden;
+                                        });
+                                        Navigator.pop(context);
+                                      } else {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text('Incorrect password.'),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      // Sort Dropdown
+                      DropdownButton<bool>(
+                        value: sortAscending,
+                        onChanged: (value) {
+                          setState(() {
+                            sortAscending = value!;
+                            _sortReservations();
+                          });
+                        },
+                        items: [
+                          DropdownMenuItem(
+                            value: true,
+                            child: Text('Ascending'),
+                          ),
+                          DropdownMenuItem(
+                            value: false,
+                            child: Text('Descending'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  // Search Bar
+                  SizedBox(height: 10),
+                  TextField(
+                    controller: searchController,
+                    onChanged: (value) {
+                      _filterReservations();
                     },
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: cardBackgroundColor,
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.transparent),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide:
+                            BorderSide(color: Theme.of(context).primaryColor),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 5,
+                      ),
+                      hintText: 'Search',
+                      prefixIcon: const Icon(
+                        Icons.search,
+                        color: Colors.grey,
+                        size: 21,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -86,33 +292,24 @@ class _TableauReservationState extends State<TableauReservation> {
                 horizontalMargin: 20,
                 dataRowHeight: 40,
                 columns: [
-                  if (!hideIdReservation)
-                    DataColumn(label: _buildTableHeader('idReservation')),
-                  if (!hideDateReservation)
-                    DataColumn(label: _buildTableHeader('dateReservation')),
-                  if (!hidePromoCode)
-                    DataColumn(label: _buildTableHeader('promoCode')),
-                  if (!hideTypePayment)
-                    DataColumn(label: _buildTableHeader('typePayment')),
-                  if (!hideEtat)
-                    DataColumn(label: _buildTableHeader('etat')),
-                  if (!hideIdUser)
-                    DataColumn(label: _buildTableHeader('idUser')),
-                  if (!hideIdVelo)
-                    DataColumn(label: _buildTableHeader('idVelo')),
-                  if (!hideStripeCheckoutSessionId)
-                    DataColumn(
-                        label: _buildTableHeader('stripeCheckoutSessionId')),
+                  if (!hideIdReservation) DataColumn(label: _buildTableHeader('idReservation')),
+                  if (!hideDateReservation) DataColumn(label: _buildTableHeader('dateReservation')),
+                  if (!hidePromoCode) DataColumn(label: _buildTableHeader('promoCode')),
+                  if (!hideTypePayment) DataColumn(label: _buildTableHeader('typePayment')),
+                  if (!hideEtat) DataColumn(label: _buildTableHeader('etat')),
+                  if (!hideIdUser) DataColumn(label: _buildTableHeader('idUser')),
+                  if (!hideIdVelo) DataColumn(label: _buildTableHeader('idVelo')),
+                  if (!hideStripeCheckoutSessionId) DataColumn(label: _buildTableHeader('stripeCheckoutSessionId')),
                   DataColumn(label: _buildTableHeader('Actions')),
                 ],
-                rows: reservations
+                rows: filteredReservations
                     .take(rowsToShow)
                     .map((reservation) => _buildDataRow(reservation))
                     .toList(),
               ),
             ),
             SizedBox(height: 10),
-            if (reservations.length > rowsToShow)
+            if (filteredReservations.length > rowsToShow)
               ElevatedButton(
                 onPressed: () {
                   setState(() {
@@ -125,55 +322,6 @@ class _TableauReservationState extends State<TableauReservation> {
         ),
       ),
     );
-  }
-
-  DataRow _buildDataRow(TableauReservationClass reservation) {
-    return DataRow(cells: [
-      if (!hideIdReservation)
-        DataCell(_buildTableCell(reservation.idReservation)),
-      if (!hideDateReservation)
-        DataCell(_buildTableCell(reservation.dateReservation)),
-      if (!hidePromoCode)
-        DataCell(_buildTableCell(reservation.promoCode)),
-      if (!hideTypePayment)
-        DataCell(_buildTableCell(reservation.typePayment)),
-      if (!hideEtat) DataCell(_buildTableCell(reservation.etat.toString())),
-      if (!hideIdUser) DataCell(_buildTableCell(reservation.idUser)),
-      if (!hideIdVelo) DataCell(_buildTableCell(reservation.idVelo)),
-      if (!hideStripeCheckoutSessionId)
-        DataCell(_buildTableCell(reservation.stripeCheckoutSessionId)),
-      DataCell(Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(
-            icon: Icon(Icons.delete, color: Colors.red),
-            onPressed: () {
-              setState((){
-                reservations.remove(reservation);
-              });
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.send, color: Colors.blue),
-            onPressed: () {
-              // Handle send promo code action
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.show_chart, color: Colors.yellow),
-            onPressed: () {
-              // Handle show action
-              _navigateToShowChart(context);
-            },
-          ),
-        ],
-      )),
-    ]);
-  }
-
-  void _navigateToShowChart(BuildContext context) {
-    // Navigate to the chart screen
-    Navigator.pushNamed(context, '/show_chart');
   }
 
   Widget _buildTableCell(String text) {
@@ -196,7 +344,7 @@ class _TableauReservationState extends State<TableauReservation> {
       padding: EdgeInsets.symmetric(vertical: 14, horizontal: 20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
-        color: Colors.green, // Set background color as needed
+        color: Colors.green,
       ),
       child: Center(
         child: Text(
@@ -209,5 +357,27 @@ class _TableauReservationState extends State<TableauReservation> {
         ),
       ),
     );
+  }
+
+  Future<void> _sendPromoCode(String promoCode, String userId) async {
+    try {
+      final apiService = ApiService();
+      await apiService.sendPromoCode(promoCode, userId);
+      print('Promo code sent successfully.');
+    } catch (error) {
+      print('Error sending promo code: $error');
+    }
+  }
+
+  void _sortReservations() {
+    setState(() {
+      filteredReservations.sort((a, b) {
+        if (sortAscending) {
+          return a.dateReservation.compareTo(b.dateReservation);
+        } else {
+          return b.dateReservation.compareTo(a.dateReservation);
+        }
+      });
+    });
   }
 }

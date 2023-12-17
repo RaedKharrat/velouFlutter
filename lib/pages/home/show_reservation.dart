@@ -7,6 +7,7 @@ import 'package:flutter_dashboard/pages/home/widgets/line_chart_card.dart';
 import 'package:flutter_dashboard/pages/home/widgets/tableau_reservation.dart';
 import 'package:flutter_dashboard/pages/home/widgets/show_reservation_card.dart';
 import 'package:flutter_dashboard/widgets/menu.dart';
+import 'package:flutter_dashboard/model/tableau_ReservationClass.dart';
 
 class ShowReservationPage extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -19,6 +20,9 @@ class ShowReservationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Assuming you have a list of reservations
+    List<TableauReservationClass> reservations = []; // Replace this with your actual list
+
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
@@ -29,7 +33,7 @@ class ShowReservationPage extends StatelessWidget {
         child: Row(
           children: [
             // Menu on the left side
-            Menu(scaffoldKey: scaffoldKey),
+            Menu(scaffoldKey: scaffoldKey), // Ensure the Menu widget is properly included only once
             // Main content on the right side
             Expanded(
               child: SizedBox(
@@ -45,10 +49,11 @@ class ShowReservationPage extends StatelessWidget {
                           height: Responsive.isMobile(context) ? 5 : 18,
                         ),
                         // Include the Header widget
-                       
-                        ShowReservationCard(),
+
+                        // Map through the list of reservations and create ShowReservationCard for each
+                        ...reservations.map((reservation) => ShowReservationCard(reservation: reservation)).toList(),
+
                         _height(context),
-                       
                         const ActivityDetailsCard(),
                         _height(context),
                       ],
