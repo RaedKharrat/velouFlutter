@@ -203,7 +203,7 @@ class _TableauReservationState extends State<TableauReservation> {
                                   TextButton(
                                     child: Text('Submit'),
                                     onPressed: () {
-                                      if (passwordController.text == '6666') {
+                                      if (passwordController.text == '0000') {
                                         setState(() {
                                           isHidden = !isHidden;
                                           hideIdReservation = isHidden;

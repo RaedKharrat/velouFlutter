@@ -2,8 +2,43 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dashboard/model/tableau_ReservationClass.dart';
+import 'package:flutter_dashboard/pages/home/widgets/line_chart_card.dart';
+import 'package:fl_chart/fl_chart.dart';
+
+
 
 class ApiService {
+
+   Future<List<Map<String, dynamic>>> fetchReservationsByDay() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://localhost:27017/reservation/reservation/reservationstat'),
+        headers: {'Cache-Control': 'no-cache'},
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic jsonData = json.decode(response.body);
+
+        if (jsonData is Map<String, dynamic> && jsonData.containsKey('data')) {
+          final List<dynamic> reservationsJson = jsonData['data'];
+
+          final List<Map<String, dynamic>> reservations = reservationsJson.cast<Map<String, dynamic>>();
+
+          return reservations;
+        } else {
+          throw Exception('Invalid data format: $jsonData');
+        }
+      } else {
+        throw Exception(
+            'Failed to fetch reservation data. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error fetching reservation data: $error');
+      throw Exception('Error fetching reservation data: $error');
+    }
+  }
+
+
   Future<List<TableauReservationClass>> fetchReservations() async {
     try {
       final response = await http.get(
