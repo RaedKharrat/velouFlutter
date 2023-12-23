@@ -85,6 +85,26 @@ class ApiService {
     }
   }
 
+Future<Map<String, dynamic>> getPaymentPercentage() async {
+  try {
+    final response = await http.get(
+      Uri.parse('http://localhost:27017/reservation/reservation/paymentpercentage'),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return data;
+    } else {
+      throw Exception('Failed to load payment percentage. Status code: ${response.statusCode}');
+    }
+  } catch (error) {
+    print('Error fetching payment percentage: $error');
+    throw Exception('Error fetching payment percentage: $error');
+  }
+}
+
+
+
   Future<int> fetchLoadedReservations() async {
     try {
       final response = await http.get(

@@ -18,7 +18,7 @@ class _ActivityDetailsCardState extends State<ActivityDetailsCard> {
   late Future<int> _totalReservations;
   late Future<int> _loadedReservations;
   late Future<int> _finishedReservations;
-  late Future<int> _totalTransaction; // Add this line
+  late Future<int> _totalTransaction;
 
   @override
   void initState() {
@@ -26,7 +26,16 @@ class _ActivityDetailsCardState extends State<ActivityDetailsCard> {
     _totalReservations = ApiService().fetchTotalReservations();
     _loadedReservations = ApiService().fetchLoadedReservations();
     _finishedReservations = ApiService().fetchFinishedReservations();
-    _totalTransaction = ApiService().fetchTotalTransaction(); // Add this line
+    _totalTransaction = ApiService().fetchTotalTransaction();
+  }
+
+  Future<void> _refreshData() async {
+    setState(() {
+      _totalReservations = ApiService().fetchTotalReservations();
+      _loadedReservations = ApiService().fetchLoadedReservations();
+      _finishedReservations = ApiService().fetchFinishedReservations();
+      _totalTransaction = ApiService().fetchTotalTransaction();
+    });
   }
 
   @override
@@ -92,7 +101,6 @@ class _ActivityDetailsCardState extends State<ActivityDetailsCard> {
                                 value: transactionSnapshot.data.toString(),
                                 title: "Total Transaction",
                               ),
-                              // Add other HealthModel items here as needed
                             ];
 
                             return GridView.builder(
@@ -106,31 +114,34 @@ class _ActivityDetailsCardState extends State<ActivityDetailsCard> {
                               ),
                               itemBuilder: (context, i) {
                                 return CustomCard(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      SvgPicture.asset(healthDetails[i].icon),
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 15, bottom: 4),
-                                        child: Text(
-                                          healthDetails[i].value,
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
+                                  child: GestureDetector(
+                                    onTap: _refreshData,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        SvgPicture.asset(healthDetails[i].icon),
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 15, bottom: 4),
+                                          child: Text(
+                                            healthDetails[i].value,
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      Text(
-                                        healthDetails[i].title,
-                                        style: const TextStyle(
-                                          fontSize: 13,
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.normal,
+                                        Text(
+                                          healthDetails[i].title,
+                                          style: const TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.normal,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 );
                               },

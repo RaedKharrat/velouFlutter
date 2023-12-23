@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard/Responsive.dart';
-import 'package:flutter_dashboard/pages/home/widgets/header_widget.dart';
-import 'package:flutter_dashboard/pages/home/widgets/header2_widget.dart';
 import 'package:flutter_dashboard/pages/home/widgets/activity_details_card.dart';
-import 'package:flutter_dashboard/pages/home/widgets/bar_graph_card.dart';
-import 'package:flutter_dashboard/pages/home/widgets/line_chart_card.dart';
 import 'package:flutter_dashboard/pages/home/widgets/tableau_reservation.dart';
+import 'package:flutter_dashboard/pages/home/widgets/reservation_stats.dart';
+import 'package:flutter_dashboard/pages/home/widgets/line_chart_card.dart';
+import 'package:flutter_dashboard/pages/home/widgets/cercle_stat.dart';
+
 import 'package:flutter_dashboard/widgets/menu.dart';
 
 class ReservationPage extends StatelessWidget {
@@ -47,8 +47,9 @@ class ReservationPage extends StatelessWidget {
                         // Include the Header widget
                         ActivityDetailsCard(),
                         _height(context),
-                       
-               
+                        // Display Reservation Stats
+                     
+                        _height(context),
                         TableauReservation(),
                         _height(context),
                         LineChartCard(),
