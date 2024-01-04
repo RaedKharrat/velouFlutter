@@ -14,14 +14,15 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
-  List<MenuModel> menu = [
-    MenuModel(icon: 'home', title: "Dashboard"),
-    MenuModel(icon: 'person', title: "Users"),
-    MenuModel(icon: 'chat', title: "Chats"),
-    MenuModel(icon: 'settings', title: "Velos"),
-    MenuModel(icon: 'payment', title: "Reservations"),
-    MenuModel(icon: 'logout', title: "Signout"),
-  ];
+ List<MenuModel> menu = [
+  MenuModel(icon: 'home', title: "Dashboard"),
+  MenuModel(icon: 'home', title: "Users"),
+  MenuModel(icon: 'home', title: "Chats"),
+  MenuModel(icon: 'home', title: "Velos"),
+  MenuModel(icon: 'home', title: "Reservations"),
+  MenuModel(icon: 'home', title: "Logout"),
+];
+
 
   @override
   Widget build(BuildContext context) {
@@ -110,9 +111,15 @@ class _MenuState extends State<Menu> {
       case "Reservations":
         Navigator.of(context).pushReplacementNamed('/reservation');
         break;
+     
+      case "Users":
+        Navigator.of(context).pushReplacementNamed('/users');
+        break;
+case "Logout":
+        Navigator.of(context).pushReplacementNamed('/login');
+        break;
       // Add cases for other menu items as needed
       // ...
-
       default:
         // Handle default case or do nothing
         break;

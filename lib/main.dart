@@ -4,8 +4,14 @@ import 'package:flutter_dashboard/dashboard.dart';
 import 'package:flutter_dashboard/widgets/menu.dart';
 import 'package:flutter_dashboard/pages/home/reservation_page.dart';
 import 'package:flutter_dashboard/pages/home/show_reservation.dart';
+import 'package:flutter_dashboard/pages/Profile_page.dart';
+import 'package:flutter_dashboard/pages/login_screen.dart';
+import 'package:flutter_dashboard/pages/ForgetCodePage.dart';
+import 'package:flutter_dashboard/pages/register_page.dart';
 import 'package:flutter_dashboard/pages/home/home_page.dart';
 import 'package:flutter_dashboard/service/api_service.dart';
+import 'package:flutter_dashboard/service/api_service3.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -42,13 +48,17 @@ class MyApp extends StatelessWidget {
         fontFamily: 'IBMPlexSans',
         brightness: Brightness.dark,
       ),
-      initialRoute: '/dashboard',
+      initialRoute: '/login',
       routes: {
         '/dashboard': (context) => HomePage(scaffoldKey: GlobalKey<ScaffoldState>()),
         '/reservation': (context) => ReservationPage(scaffoldKey: GlobalKey<ScaffoldState>()),
         '/show_chart': (context) => ShowReservationPage(scaffoldKey: GlobalKey<ScaffoldState>()),
+        '/users': (context) => UserListPage(),
+         '/login': (context) => LoginPage(),
+         '/signup': (context) => SignUpView(),
+         '/forgetpassword': (context) => ForgetCodePage(),
       },
-      home: HomePage(scaffoldKey: GlobalKey<ScaffoldState>()),
+      home: LoginPage(),
     );
   }
 }
