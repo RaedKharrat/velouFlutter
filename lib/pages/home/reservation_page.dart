@@ -5,7 +5,6 @@ import 'package:flutter_dashboard/pages/home/widgets/tableau_reservation.dart';
 import 'package:flutter_dashboard/pages/home/widgets/reservation_stats.dart';
 import 'package:flutter_dashboard/pages/home/widgets/line_chart_card.dart';
 import 'package:flutter_dashboard/pages/home/widgets/cercle_stat.dart';
-
 import 'package:flutter_dashboard/widgets/menu.dart';
 
 class ReservationPage extends StatelessWidget {
@@ -24,12 +23,12 @@ class ReservationPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Reservation Page'),
       ),
-      endDrawer: Menu(scaffoldKey: scaffoldKey),
+      endDrawer: Responsive.isMobile(context) ? Drawer(child: Menu(scaffoldKey: scaffoldKey)) : null,
       body: Material(
         child: Row(
           children: [
             // Menu on the left side
-            Menu(scaffoldKey: scaffoldKey),
+            if (Responsive.isDesktop(context)) Menu(scaffoldKey: scaffoldKey),
             // Main content on the right side
             Expanded(
               child: SizedBox(
@@ -48,7 +47,6 @@ class ReservationPage extends StatelessWidget {
                         ActivityDetailsCard(),
                         _height(context),
                         // Display Reservation Stats
-                     
                         _height(context),
                         TableauReservation(),
                         _height(context),
